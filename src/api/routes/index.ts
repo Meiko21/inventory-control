@@ -2,6 +2,9 @@ import { Application, Request, Response } from 'express';
 
 import { ensureDatabaseConnection } from '../../database/connection';
 
+import employeeRoutes from './employeeRoutes';
+import inventoryRoutes from './inventoryRoutes';
+
 export default (app: Application) => {
 
   app.get('/', async (req: Request, res: Response) => {
@@ -14,4 +17,7 @@ export default (app: Application) => {
 
     return res.send(response).status(200);
   });
+
+  app.use('/employee', employeeRoutes);
+  app.use('/inventory', inventoryRoutes);
 };
