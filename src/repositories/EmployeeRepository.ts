@@ -5,18 +5,22 @@ interface IEmployee {
   id: string,
   internal_code: string,
   name: string,
+  email?: string,
+  password?: string,
   created_at?: Date,
   updated_at?: Date
 }
 
 class EmployeeRepository {
-  async create(params: { internal_code: string, name: string }) {
+  async create(params: { internal_code: string, name: string, email?: string, password?: string, is_system_user?: boolean }) {
     const [employee] = await database('employee')
       .insert({
         id: uuidv4(),
         internal_code: params.internal_code,
         name: params.name,
-        is_system_user: false
+        email: params?.email,
+        password: params?.password,
+        is_system_user: params?.is_system_user
       })
       .returning("id");
 
@@ -56,6 +60,23 @@ class EmployeeRepository {
         'id',
         'internal_code',
         'name',
+        'created_at',
+        'updated_at'
+      ])
+      .first();
+
+    return employee;
+  }
+
+  async findByEmail(email: string): Promise<IEmployee | undefined> {
+    const employee = await database<IEmployee>('employee')
+      .where("email", email)
+      .select([
+        'id',
+        'internal_code',
+        'name',
+        'email',
+        'password',
         'created_at',
         'updated_at'
       ])
