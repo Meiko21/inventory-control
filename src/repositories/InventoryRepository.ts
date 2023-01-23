@@ -1,21 +1,22 @@
 import { connection as database } from '../database/connection';
 import { v4 as uuidv4 } from 'uuid';
-import { date } from 'yup';
 
 interface IInventoryItem {
   id: string,
   name: string,
   quantity: number,
+  price: number,
   created_at?: Date,
   updated_at?: Date
 }
 
 class InventoryRepository {
-  async create(name: string) {
+  async create(params: { name: string, price: number }) {
     const [inventory] = await database.table('inventory')
       .insert({
         id: uuidv4(),
-        name,
+        name: params.name,
+        price: params.price,
         quantity: 0
       })
       .returning("id");
@@ -40,6 +41,7 @@ class InventoryRepository {
       .select([
         'id',
         'name',
+        'price',
         'quantity',
         'created_at',
         'updated_at'
@@ -47,6 +49,28 @@ class InventoryRepository {
       .first();
 
     return item;
+  }
+
+  async findItemById(id: string): Promise<IInventoryItem | undefined> {
+    const item: IInventoryItem = await database<IInventoryItem>('inventory')
+      .where("id", id)
+      .select([
+        'id',
+        'name',
+        'quantity',
+        'price',
+        'created_at',
+        'updated_at'
+      ])
+      .first();
+
+    return item;
+  }
+
+  async updateItemQuantity(id: string, quantity: number) {
+    return database('inventory')
+      .where("id", id)
+      .update("quantity", quantity);
   }
 }
 

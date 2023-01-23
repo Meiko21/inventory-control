@@ -5,6 +5,7 @@ import InventoryRepository from '../../repositories/InventoryRepository';
 class InventoryController {
   async createItem(req: Request, res: Response): Response {
     const name = req.body.name;
+    const price = req.body.price;
 
     const itemAlreadyExists = await InventoryRepository.findItemByName(name);
 
@@ -19,7 +20,10 @@ class InventoryController {
       }).status(400);
     }
 
-    const id = await InventoryRepository.create(name);
+    const id = await InventoryRepository.create({
+      name,
+      price
+    });
 
     return res.json({
       id

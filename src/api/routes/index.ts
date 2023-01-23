@@ -4,6 +4,7 @@ import { ensureDatabaseConnection } from '../../database/connection';
 
 import employeeRoutes from './employeeRoutes';
 import inventoryRoutes from './inventoryRoutes';
+import transactionRoutes from './transactionRoutes';
 
 export default (app: Application) => {
 
@@ -20,4 +21,5 @@ export default (app: Application) => {
 
   app.use('/employee', employeeRoutes);
   app.use('/inventory', inventoryRoutes);
+  app.use('/transaction', transactionRoutes);
 };

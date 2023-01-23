@@ -48,6 +48,21 @@ class EmployeeRepository {
 
     return employee;
   }
+
+  async findById(id: string): Promise<IEmployee | undefined> {
+    const employee = await database<IEmployee>('employee')
+      .where("id", id)
+      .select([
+        'id',
+        'internal_code',
+        'name',
+        'created_at',
+        'updated_at'
+      ])
+      .first();
+
+    return employee;
+  }
 }
 
 export default new EmployeeRepository();
